@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+OpenIDE-Module: net.sf.rem/2
+OpenIDE-Module-Layer: net/sf/rem/resources/layer.xml
+OpenIDE-Module-Localizing-Bundle: net/sf/rem/resources/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.5.0
+
+Name: net/sf/rem/editor/DSPDataLoader.class
+Install-Before: org.openide.loaders.XMLDataObject, org.netbeans.modules.xml.core.XMLDataObject
+OpenIDE-Module-Class: Loader
+
+Name: net/sf/rem/loaders/ZHTMLDataLoader.class
+OpenIDE-Module-Class: Loader
+
+Name: net/sf/rem/loaders/ZsDataLoader.class
+OpenIDE-Module-Class: Loader
+
+Name: net/sf/rem/loaders/ZulDataLoader.class
+Install-Before: org.openide.loaders.XMLDataObject, org.netbeans.modules.xml.core.XMLDataObject
+OpenIDE-Module-Class: Loader
+Class-Path: ../libs/xsom.jar ../lib/relaxngDatatype.jar
+

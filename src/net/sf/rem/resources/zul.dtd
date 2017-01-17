@@ -1,0 +1,1272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : zul.dtd
+    Created on : March 2, 2007, 8:10 PM
+    Author     : magic
+    Description:
+        Inverted from zul.xsd. It is created to use Source Editor's code completion based on DTD.
+
+    TODO define vocabulary identification data
+    PUBLIC ID  : SCHEMA:http://java.sun.com/xml/ns/javaee/zul.xsd
+    SYSTEM ID  : nbres:/net/sf/rem/resources/zul.dtd
+-->
+
+<!ENTITY % zkAttrGroup "if CDATA #IMPLIED
+        unless CDATA #IMPLIED
+        forEach CDATA #IMPLIED
+        forEachBegin CDATA #IMPLIED
+        forEachEnd CDATA #IMPLIED
+        use CDATA #IMPLIED
+        fulfill CDATA #IMPLIED
+        apply CDATA #IMPLIED
+        self CDATA #IMPLIED
+">
+
+<!ENTITY % alignAttrType "top CDATA #IMPLIED
+        texttop CDATA #IMPLIED
+        middle CDATA #IMPLIED
+        absmiddle CDATA #IMPLIED
+        bottom CDATA #IMPLIED
+        absbottom CDATA #IMPLIED
+        baseline CDATA #IMPLIED
+        left CDATA #IMPLIED
+        right CDATA #IMPLIED
+        center CDATA #IMPLIED
+">
+
+<!ENTITY % divAlignAttrType "left CDATA #IMPLIED
+        right CDATA #IMPLIED
+        left CDATA #IMPLIED
+        center CDATA #IMPLIED
+        justify CDATA #IMPLIED
+">
+
+<!ENTITY % abstractComponentAttrGroup "%zkAttrGroup;
+        id ID #IMPLIED
+        visible CDATA #IMPLIED
+        mold CDATA #IMPLIED
+">
+
+<!ENTITY % htmlBasedComponentAttrGroup "%abstractComponentAttrGroup;
+        width CDATA #IMPLIED
+        height CDATA #IMPLIED
+        sclass CDATA #IMPLIED
+        style CDATA #IMPLIED
+        left CDATA #IMPLIED
+        top CDATA #IMPLIED
+        draggable CDATA #IMPLIED
+        droppable CDATA #IMPLIED
+        tooltiptext CDATA #IMPLIED
+        zindex CDATA #IMPLIED
+        onCreate CDATA #IMPLIED
+        onDrop CDATA #IMPLIED
+">
+
+<!ENTITY % xulElementAttrGroup "%htmlBasedComponentAttrGroup;
+        action CDATA #IMPLIED
+        context CDATA #IMPLIED
+        popup CDATA #IMPLIED
+        tooltip CDATA #IMPLIED
+">
+<!ENTITY % inputElementAttrGroup "%xulElementAttrGroup;
+        name CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        readonly CDATA #IMPLIED
+        maxlength CDATA #IMPLIED
+        cols CDATA #IMPLIED
+        constraint CDATA #IMPLIED
+        tabindex CDATA #IMPLIED
+">
+
+<!ENTITY % formatInputElementAttrGroup "%inputElementAttrGroup;
+        format CDATA #IMPLIED
+">
+
+<!ENTITY % labelElementAttrGroup "%xulElementAttrGroup;
+        label CDATA #IMPLIED
+">
+
+<!ENTITY % labelImageElementAttrGroup "%labelElementAttrGroup;
+        image CDATA #IMPLIED
+">
+
+<!ENTITY % headerElementAttrGroup "%labelImageElementAttrGroup;
+        align (left|right|center) #IMPLIED
+        valign (top|baseline|middle|bottom) #IMPLIED
+">
+
+<!ENTITY % packAttrType "start|center|end">
+
+<!ENTITY % flashWmodeAttrType "transparent|opaque|window"> 
+
+<!ENTITY % baseGroup "attribute | custom-attributes | variables">
+
+<!ENTITY % anyGroup "%baseGroup; | audio | bandbox | borderlayout | box | button | calendar | chart | checkbox | combobox | datebox | decimalbox | div | doublebox | fckeditor | fisheyelist | gmaps | grid | groupbox | hbox | html | iframe | image | imagemap | include | intbox | label | listbox | longbox | menubar | menupopup | paging |  popup | radio | radiogroup | script | separator | slider | space | style | tabbox | textbox | timer | timebox | toolbar | toolbarbutton | tree | vbox | window | zk | zscript">
+
+<!-- area -->
+<!ELEMENT area (%baseGroup;)*>
+<!ATTLIST area
+        %abstractComponentAttrGroup;
+        shape CDATA #IMPLIED
+        coords CDATA #IMPLIED
+        tooltiptext CDATA #IMPLIED
+>
+
+<!-- attribute -->
+<!ELEMENT attribute (#PCDATA)>
+<!ATTLIST attribute
+        %zkAttrGroup;
+        name CDATA #REQUIRED
+        trim CDATA #IMPLIED
+>
+
+<!-- audio -->
+<!ELEMENT audio  (%baseGroup;)*>
+<!ATTLIST audio
+        %xulElementAttrGroup;
+        align (top|texttop|middle|absmiddle|bottom|absbottom|baseline|left|right|center) #IMPLIED
+        border CDATA #IMPLIED
+        src CDATA #IMPLIED
+        autostart CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- auxhead -->
+<!ELEMENT auxhead (%baseGroup; | auxheader)*>
+<!ATTLIST auxhead %xulElementAttrGroup;>
+
+<!-- auxheader -->
+<!ELEMENT auxheader (%anyGroup;)*>
+<!ATTLIST auxheader %headerElementAttrGroup;
+                    colspan CDATA #IMPLIED
+                    rowspan CDATA #IMPLIED
+>
+
+<!-- bandbox -->
+<!ELEMENT bandbox ((%baseGroup;)*,(bandpopup,(%baseGroup;)*)?)>
+<!ATTLIST bandbox
+        %inputElementAttrGroup;
+        autodrop CDATA #IMPLIED
+        buttonVisible CDATA #IMPLIED
+        image CDATA #IMPLIED
+        value CDATA #IMPLIED
+        type (text|password) #IMPLIED
+        open CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        onOK CDATA #IMPLIED
+>
+
+<!-- bandpopup -->
+<!ELEMENT bandpopup (#PCDATA | %anyGroup; )*>
+<!ATTLIST bandpopup %xulElementAttrGroup; >
+
+<!-- borderlayout -->
+<!ELEMENT borderlayout (%baseGroup; | north | south | center | west | east)*>
+<!ATTLIST borderlayout %xulElementAttrGroup;>
+
+<!-- box -->
+<!ELEMENT box (#PCDATA | %anyGroup; | splitter)*>
+<!ATTLIST box
+        %xulElementAttrGroup;
+        orient (horizontal|vertical) #IMPLIED
+        spacing CDATA #IMPLIED
+        widths CDATA #IMPLIED
+        heights CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        align (%packAttrType;) #IMPLIED
+        pack (%packAttrType;) #IMPLIED
+>
+
+<!-- button -->
+<!ELEMENT button (%baseGroup;)*>
+<!ATTLIST button
+        %labelImageElementAttrGroup;
+        orient (horizontal|vertical) #IMPLIED
+        dir (normal|reverse) #IMPLIED
+        href CDATA #IMPLIED
+        target CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        readonly CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- calendar -->
+<!ELEMENT calendar (%baseGroup;)*>
+<!ATTLIST calendar
+        %xulElementAttrGroup;
+        name CDATA #IMPLIED
+        value CDATA #IMPLIED
+        compact CDATA #IMPLIED
+        timeZone CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- caption -->
+<!ELEMENT caption (#PCDATA | %anyGroup;)*>
+<!ATTLIST caption
+        %labelImageElementAttrGroup;
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+<!-- center -->
+<!ELEMENT center (%anyGroup;)*>
+<!ATTLIST center 
+        %xulElementAttrGroup;
+        flex CDATA #IMPLIED
+        margins CDATA #IMPLIED
+        autoscroll CDATA #IMPLIED
+        border CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- chart -->
+<!ELEMENT chart (%baseGroup;)*>
+<!ATTLIST chart
+        %xulElementAttrGroup;
+        border CDATA #IMPLIED
+        align (top|texttop|middle|absmiddle|bottom|absbottom|baseline|left|right|center) #IMPLIED
+        hspace CDATA #IMPLIED
+        vspace CDATA #IMPLIED
+        type (area|bar|histogram|line|pie|polar|ring|scatter|stacked_area|stacked_bar|step|step_area|time_series|waterfall) #IMPLIED
+        model CDATA #IMPLIED
+        title CDATA #IMPLIED
+        xAxis CDATA #IMPLIED
+        yAxis CDATA #IMPLIED
+        threeD CDATA #IMPLIED
+        showLegend CDATA #IMPLIED
+        showTooltiptext CDATA #IMPLIED
+        paneAlpha CDATA #IMPLIED
+        paneColor CDATA #IMPLIED
+        fgAlpha CDATA #IMPLIED
+        bgAlpha CDATA #IMPLIED
+        bgColor CDATA #IMPLIED
+        orient (horizontal|vertical) #IMPLIED
+        timeZone CDATA #IMPLIED
+        period (millisecond|secondr|minute|hour|day|week|month|quarter|year) #IMPLIED
+        areaListener CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- checkbox -->
+<!ELEMENT checkbox (%baseGroup;)*>
+<!ATTLIST checkbox
+        %labelImageElementAttrGroup;
+        name CDATA #IMPLIED
+        checked CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        readonly CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onCheck CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- column -->
+<!ELEMENT column (%anyGroup;)*>
+<!ATTLIST column
+        %headerElementAttrGroup;
+        sortDirection (natural|ascending|descending) #IMPLIED
+        sortAscending CDATA #IMPLIED
+        sortDescending CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onSort CDATA #IMPLIED
+>
+
+<!-- columns -->
+<!ELEMENT columns (%baseGroup; | column)*>
+<!ATTLIST columns
+        %xulElementAttrGroup;
+        sizable CDATA #IMPLIED
+>
+
+<!-- combobox -->
+<!ELEMENT combobox (%baseGroup; | comboitem)*>
+<!ATTLIST combobox
+        %inputElementAttrGroup;
+        autodrop CDATA #IMPLIED
+        buttonVisible CDATA #IMPLIED
+        image CDATA #IMPLIED
+        value CDATA #IMPLIED
+        type (text|password) #IMPLIED
+        open CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- comboitem -->
+<!ELEMENT comboitem (#PCDATA | %anyGroup;)*>
+<!ATTLIST comboitem
+        %labelImageElementAttrGroup;
+        description CDATA #IMPLIED
+        value CDATA #IMPLIED
+        content CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+>
+
+<!-- custom-attributes -->
+<!ELEMENT custom-attributes EMPTY>
+
+<!-- datebox -->
+<!ELEMENT datebox (%baseGroup;)*>
+<!ATTLIST datebox
+        %formatInputElementAttrGroup;
+        value CDATA #IMPLIED
+        lenient CDATA #IMPLIED
+        compact CDATA #IMPLIED
+        timeZone CDATA #IMPLIED
+        buttonVisible CDATA #IMPLIED
+        image CDATA #IMPLIED
+        open CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- decimalbox -->
+<!ELEMENT decimalbox (%baseGroup;)*>
+<!ATTLIST decimalbox
+        %formatInputElementAttrGroup;
+        value CDATA #IMPLIED
+        scale CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- div -->
+<!ELEMENT div (#PCDATA | %anyGroup;)*>
+<!ATTLIST div
+        %xulElementAttrGroup;
+        align (left|right|center|justify) #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- doublebox -->
+<!ELEMENT doublebox (%baseGroup;)*>
+<!ATTLIST doublebox
+        %formatInputElementAttrGroup;
+        value CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- east -->
+<!ELEMENT east (%anyGroup;)*>
+<!ATTLIST east
+        %xulElementAttrGroup;
+        flex CDATA #IMPLIED
+        size CDATA #IMPLIED
+        splittable CDATA #IMPLIED
+        collapsible CDATA #IMPLIED
+        margins CDATA #IMPLIED
+        open CDATA #IMPLIED
+        autoscroll CDATA #IMPLIED
+        border CDATA #IMPLIED
+        maxsize CDATA #IMPLIED
+        minsize CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- fileupload -->
+<!ELEMENT fileupload (%baseGroup;)*>
+<!ATTLIST fileupload
+        %htmlBasedComponentAttrGroup;
+        native CDATA #IMPLIED
+        number CDATA #IMPLIED
+ >
+
+<!-- flash -->
+<!ELEMENT flash (%baseGroup;)*>
+<!ATTLIST flash
+        %htmlBasedComponentAttrGroup;
+        bgcolor CDATA #IMPLIED
+        loop CDATA #IMPLIED
+        autoPlay CDATA #IMPLIED
+        wmode (%flashWmodeAttrType;) #IMPLIED
+        src CDATA #IMPLIED
+>
+
+<!-- foot -->
+<!ELEMENT foot (%baseGroup; | footer)*>
+<!ATTLIST foot
+        %xulElementAttrGroup;
+>
+
+<!-- footer -->
+<!ELEMENT footer (#PCDATA | %anyGroup;)*>
+<!ATTLIST footer
+         %labelImageElementAttrGroup;
+        span CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+
+<!-- grid -->
+<!ELEMENT grid (%baseGroup; | auxhead | columns | rows | foot)*>
+<!ATTLIST grid
+        %xulElementAttrGroup;
+        align (left|right|center) #IMPLIED
+        pageSize CDATA #IMPLIED
+        paginal CDATA #IMPLIED
+        model CDATA #IMPLIED
+        rowRenderer CDATA #IMPLIED
+        onPaging CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        preloadSize CDATA #IMPLIED
+>
+
+<!-- groupbox -->
+<!--
+  The children elements of groupbox here may not be equivalent to that in zul.xsd
+-->
+<!ELEMENT groupbox (#PCDATA | %anyGroup; | caption)*>
+<!ATTLIST groupbox
+        %xulElementAttrGroup;
+        open CDATA #IMPLIED
+        closable CDATA #IMPLIED
+        contentStyle CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- hbox -->
+<!ELEMENT hbox (#PCDATA | %anyGroup; | splitter)*>
+<!ATTLIST hbox
+        %xulElementAttrGroup;
+        spacing CDATA #IMPLIED
+        widths CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        align (%packAttrType;) #IMPLIED
+        pack (%packAttrType;) #IMPLIED
+>
+
+<!-- html -->
+<!ELEMENT html (%baseGroup;)*>
+<!ATTLIST html
+        %xulElementAttrGroup;
+        content CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- iframe -->
+<!ELEMENT iframe (%baseGroup;)*>
+<!ATTLIST iframe
+        %xulElementAttrGroup;
+        name CDATA #IMPLIED
+        src CDATA #IMPLIED
+        align (top|texttop|middle|absmiddle|bottom|absbottom|baseline|left|right|center) #IMPLIED
+        autohide CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- image -->
+<!ELEMENT image (%baseGroup;)*>
+<!ATTLIST image
+        %xulElementAttrGroup;
+        border CDATA #IMPLIED
+        src CDATA #IMPLIED
+        align (top|texttop|middle|absmiddle|bottom|absbottom|baseline|left|right|center) #IMPLIED
+        hspace CDATA #IMPLIED
+        vspace CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- imagemap -->
+<!ELEMENT imagemap (%baseGroup; | area)*>
+<!ATTLIST imagemap
+        %xulElementAttrGroup;
+        border CDATA #IMPLIED
+        src CDATA #IMPLIED
+        align (top|texttop|middle|absmiddle|bottom|absbottom|baseline|left|right|center) #IMPLIED
+        hspace CDATA #IMPLIED
+        vspace CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- include -->
+<!ELEMENT include (%baseGroup;)*>
+<!ATTLIST include
+        %xulElementAttrGroup;
+        src CDATA #IMPLIED
+        localized CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- intbox -->
+<!ELEMENT intbox (%baseGroup;)*>
+<!ATTLIST intbox
+         %formatInputElementAttrGroup;
+        value CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- longbox -->
+<!ELEMENT longbox (%baseGroup;)*>
+<!ATTLIST longbox
+        %formatInputElementAttrGroup;
+        value CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- label -->
+<!ELEMENT label (%baseGroup;)*>
+<!ATTLIST label
+        %xulElementAttrGroup;
+        value CDATA #IMPLIED
+        multiline CDATA #IMPLIED
+        maxlength CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- listbox -->
+<!ELEMENT listbox ((attribute | custom-attributes | auxhead | listitem)*,((listhead,(attribute | custom-attributes | auxhead | listitem)*,(listfoot,(attribute | custom-attributes | auxhead | listitem)*)?) | (listfoot,(attribute | custom-attributes | auxhead | listitem)*,(listhead,(attribute | custom-attributes | auxhead | listitem)*)?))?)>
+<!ATTLIST listbox
+        %xulElementAttrGroup;
+        checkmark CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        pageSize CDATA #IMPLIED
+        paginal CDATA #IMPLIED
+        onPaging CDATA #IMPLIED
+        readonly CDATA #IMPLIED
+        multiple CDATA #IMPLIED
+        vflex CDATA #IMPLIED
+        rows CDATA #IMPLIED
+        maxlength CDATA #IMPLIED
+        name CDATA #IMPLIED
+        tabindex CDATA #IMPLIED
+        model CDATA #IMPLIED
+        itemRenderer CDATA #IMPLIED
+        onSelect CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        preloadSize CDATA #IMPLIED
+>
+
+<!--listcell -->
+<!ELEMENT listcell (#PCDATA | %anyGroup; )*>
+<!ATTLIST listcell
+        %labelImageElementAttrGroup;
+        span CDATA #IMPLIED
+>
+
+<!-- listfoot -->
+<!ELEMENT listfoot (%baseGroup; | auxhead | listfooter)*>
+<!ATTLIST listfoot
+        %xulElementAttrGroup;
+>
+
+<!-- listfooter -->
+<!ELEMENT listfooter (#PCDATA | %anyGroup; )*>
+<!ATTLIST listfooter
+        %labelImageElementAttrGroup;
+        span CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+<!-- listhead -->
+<!ELEMENT listhead (%baseGroup; | listheader)*>
+<!ATTLIST listhead
+        %xulElementAttrGroup;
+        sizable CDATA #IMPLIED
+>
+
+<!-- listheader -->
+<!ELEMENT listheader (%anyGroup;)*>
+<!ATTLIST listheader
+        %headerElementAttrGroup;
+        sort (auto|none) #IMPLIED
+        sortDirection (natural|ascending|descending) #IMPLIED
+        sortAscending CDATA #IMPLIED
+        sortDescending CDATA #IMPLIED
+        maxlength CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onSort CDATA #IMPLIED
+>
+
+<!-- listitem -->
+<!ELEMENT listitem (%baseGroup; | listcell)*>
+<!ATTLIST listitem
+        %labelElementAttrGroup;
+        value CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        selected CDATA #IMPLIED
+>
+
+<!-- menu -->
+<!ELEMENT menu ((%baseGroup;)*,(menupopup,(%baseGroup;)*)?)>
+<!ATTLIST menu
+         %labelImageElementAttrGroup;
+>
+
+<!-- menubar -->
+<!ELEMENT menubar (%baseGroup; | menu)*>
+<!ATTLIST menubar
+         %xulElementAttrGroup;
+        orient (horizontal|vertical) #IMPLIED
+        autodrop CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- menuitem -->
+<!ELEMENT menuitem (%baseGroup;)*>
+<!ATTLIST menuitem
+        %labelImageElementAttrGroup;
+        value CDATA #IMPLIED
+        checked CDATA #IMPLIED
+        autocheck CDATA #IMPLIED
+        href CDATA #IMPLIED
+        target CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+>
+
+<!-- menupopup -->
+<!ELEMENT menupopup (%baseGroup; | menu | menuitem | menuseparator)*>
+<!ATTLIST menupopup
+        %xulElementAttrGroup;
+        onOpen CDATA #IMPLIED
+>
+
+<!-- menuseparator -->
+<!ELEMENT menuseparator (%baseGroup;)*>
+<!ATTLIST menuseparator
+        %xulElementAttrGroup;
+>
+
+<!-- north -->
+<!ELEMENT north (%anyGroup;)*>
+<!ATTLIST north
+        %xulElementAttrGroup;
+        flex CDATA #IMPLIED
+        size CDATA #IMPLIED
+        splittable CDATA #IMPLIED
+        collapsible CDATA #IMPLIED
+        margins CDATA #IMPLIED
+        open CDATA #IMPLIED
+        autoscroll CDATA #IMPLIED
+        border CDATA #IMPLIED
+        maxsize CDATA #IMPLIED
+        minsize CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- paging -->
+<!ELEMENT paging (%baseGroup;)*>
+<!ATTLIST paging
+        %xulElementAttrGroup;
+        pageSize CDATA #IMPLIED
+        totalSize CDATA #IMPLIED
+        activePage CDATA #IMPLIED
+        pageIncrement CDATA #IMPLIED
+        detailed CDATA #IMPLIED
+        autohide CDATA #IMPLIED
+>
+
+<!-- popup -->
+<!ELEMENT popup (%anyGroup; | menu | menuitem | menuseparator)*>
+<!ATTLIST popup
+        %xulElementAttrGroup;
+        onOpen CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- progressmeter -->
+<!ELEMENT progressmeter (%baseGroup;)*>
+<!ATTLIST progressmeter
+         %xulElementAttrGroup;
+        value CDATA #IMPLIED
+>
+
+<!-- radio -->
+<!ELEMENT radio (%baseGroup;)*>
+<!ATTLIST radio
+        %labelImageElementAttrGroup;
+        selected CDATA #IMPLIED
+        checked CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        readonly CDATA #IMPLIED
+        tabindex CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onCheck CDATA #IMPLIED
+>
+
+<!-- radiogroup -->
+<!ELEMENT radiogroup (%baseGroup; | radio)*>
+<!ATTLIST radiogroup
+        %xulElementAttrGroup;
+        name CDATA #IMPLIED
+        orient (horizontal|vertical) #IMPLIED
+        onCheck CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- row -->
+<!ELEMENT row (#PCDATA | %anyGroup;)*>
+<!ATTLIST row
+        %xulElementAttrGroup;
+        align (left|right|center) #IMPLIED
+        nowrap CDATA #IMPLIED
+        spans CDATA #IMPLIED
+        valign (top|baseline|middle|bottom) #IMPLIED
+        value CDATA #IMPLIED
+>
+
+<!-- rows -->
+<!ELEMENT rows (%baseGroup; | row)*>
+<!ATTLIST rows
+        %xulElementAttrGroup;
+>
+
+<!-- script -->
+<!ELEMENT script (#PCDATA | %baseGroup;)*>
+<!ATTLIST script
+        %abstractComponentAttrGroup;
+        src CDATA #IMPLIED
+        type CDATA #REQUIRED
+        charset CDATA #IMPLIED
+        defer CDATA #IMPLIED
+>
+
+<!-- separator -->
+<!ELEMENT separator (%baseGroup;)*>
+<!ATTLIST separator
+        %xulElementAttrGroup;
+        spacing CDATA #IMPLIED
+        orient (horizontal|vertical) #IMPLIED
+        bar CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- slider -->
+<!ELEMENT slider (%baseGroup;)*>
+<!ATTLIST slider
+        %xulElementAttrGroup;
+        name CDATA #IMPLIED
+        curpos CDATA #IMPLIED
+        maxpos CDATA #IMPLIED
+        slidingtext CDATA #IMPLIED
+        pageIncrement CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onScroll CDATA #IMPLIED
+        onScrolling CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- south -->
+<!ELEMENT south (%anyGroup;)*>
+<!ATTLIST south
+        %xulElementAttrGroup;
+        flex CDATA #IMPLIED
+        size CDATA #IMPLIED
+        splittable CDATA #IMPLIED
+        collapsible CDATA #IMPLIED
+        margins CDATA #IMPLIED
+        open CDATA #IMPLIED
+        autoscroll CDATA #IMPLIED
+        border CDATA #IMPLIED
+        maxsize CDATA #IMPLIED
+        minsize CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- space -->
+<!ELEMENT space (%baseGroup;)*>
+<!ATTLIST space
+        %xulElementAttrGroup;
+        spacing CDATA #IMPLIED
+        orient (horizontal|vertical) #IMPLIED
+        bar CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- splitter -->
+<!ELEMENT splitter (%baseGroup;)*>
+<!ATTLIST splitter
+        %xulElementAttrGroup;
+        collapse (after|before) #IMPLIED
+        open CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- style -->
+<!ELEMENT style (#PCDATA | %baseGroup;)*>
+<!ATTLIST style
+        %abstractComponentAttrGroup;
+        src CDATA #IMPLIED
+>
+
+<!-- tab -->
+<!ELEMENT tab (%baseGroup;)*>
+<!ATTLIST tab
+        %labelImageElementAttrGroup;
+        selected CDATA #IMPLIED
+        closable CDATA #IMPLIED
+        onClose CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+<!-- tabbox -->
+<!ELEMENT tabbox (%baseGroup; | tabs | tabpanels)*>
+<!ATTLIST tabbox
+        %xulElementAttrGroup;
+        panelSpacing CDATA #IMPLIED
+        selectedIndex CDATA #IMPLIED
+        selectedTab CDATA #IMPLIED
+        selectedPanel CDATA #IMPLIED
+        orient (horizontal|vertical) #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onSelect CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- tabpanel -->
+<!ELEMENT tabpanel (#PCDATA | %anyGroup; )*>
+<!ATTLIST tabpanel
+        %xulElementAttrGroup;
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+<!-- tabpanels -->
+<!ELEMENT tabpanels (%baseGroup; | tabpanel)*>
+<!ATTLIST tabpanels
+        %xulElementAttrGroup;
+>
+
+<!-- tabs -->
+<!ELEMENT tabs (%baseGroup; | tab)*>
+<!ATTLIST tabs
+        %xulElementAttrGroup;
+        align (start|center|end) #IMPLIED
+>
+
+<!-- textbox -->
+<!ELEMENT textbox (%baseGroup;)*>
+<!ATTLIST textbox
+        %inputElementAttrGroup;
+        constraint CDATA #IMPLIED
+        value CDATA #IMPLIED
+        type (text|password) #IMPLIED
+        rows CDATA #IMPLIED
+        multiline CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- timer -->
+<!ELEMENT timer (%baseGroup;)*>
+<!ATTLIST timer
+        %htmlBasedComponentAttrGroup;
+        delay CDATA #IMPLIED
+        repeats CDATA #IMPLIED
+        running CDATA #IMPLIED
+        onTimer CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- timebox -->
+<!ELEMENT timebox (%baseGroup;)*>
+<!ATTLIST timebox
+        %formatInputElementAttrGroup;
+        constraint CDATA #IMPLIED
+        value CDATA #IMPLIED
+        buttonVisible CDATA #IMPLIED
+        image CDATA #IMPLIED
+        timeZone CDATA #IMPLIED
+        onChange CDATA #IMPLIED
+        onChanging CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- toolbar -->
+<!ELEMENT toolbar (%baseGroup; | toolbarbutton | button | image)*>
+<!ATTLIST toolbar
+        %xulElementAttrGroup;
+        orient (horizontal|vertical) #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- toolbarbutton -->
+<!ELEMENT toolbarbutton (%baseGroup;)*>
+<!ATTLIST toolbarbutton
+         %labelImageElementAttrGroup;
+        orient (horizontal|vertical) #IMPLIED
+        dir (normal|reverse) #IMPLIED
+        href CDATA #IMPLIED
+        target CDATA #IMPLIED
+        tabindex CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onFocus CDATA #IMPLIED
+        onBlur CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- tree -->
+<!ELEMENT tree (%baseGroup; | auxhead | treechildren | treecols | treefoot)*>
+<!ATTLIST tree
+        %xulElementAttrGroup;
+        rows CDATA #IMPLIED
+        name CDATA #IMPLIED
+        checkmark CDATA #IMPLIED
+        multiple CDATA #IMPLIED
+        vflex CDATA #IMPLIED
+        fixedLayout CDATA #IMPLIED
+        onSelect CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        model CDATA #IMPLIED
+        treeitemRender CDATA #IMPLIED
+>
+
+<!-- treecell -->
+<!ELEMENT treecell (#PCDATA | %anyGroup;)*>
+<!ATTLIST treecell
+        %labelImageElementAttrGroup;
+        span CDATA #IMPLIED
+>
+
+<!-- treechildren -->
+<!ELEMENT treechildren (%baseGroup; | treeitem)*>
+<!ATTLIST treechildren
+        %xulElementAttrGroup;
+>
+
+<!-- treecol -->
+<!ELEMENT treecol (%anyGroup;)*>
+<!ATTLIST treecol
+        %headerElementAttrGroup;
+        maxlength CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+<!-- treecols -->
+<!ELEMENT treecols (%baseGroup; | auxheads | treecol)*>
+<!ATTLIST treecols
+        %xulElementAttrGroup;
+        sizable CDATA #IMPLIED
+>
+
+<!-- treefoot -->
+<!ELEMENT treefoot (%baseGroup; | auxhead | treefooter)*>
+<!ATTLIST treefoot
+         %xulElementAttrGroup;
+>
+
+<!-- treefooter -->
+<!ELEMENT treefooter (#PCDATA | %anyGroup;)*>
+<!ATTLIST treefooter
+        %labelImageElementAttrGroup;
+        span CDATA #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+>
+
+
+<!-- treeitem -->
+<!ELEMENT treeitem ((%baseGroup;)*,((treerow,(%baseGroup;)*,(treechildren,(%baseGroup;)*)?) | (treechildren,(%baseGroup;)*,(treerow,(%baseGroup;)*)?))?)>
+<!ATTLIST treeitem
+        %xulElementAttrGroup;
+        value CDATA #IMPLIED
+        open CDATA #IMPLIED
+        selected CDATA #IMPLIED
+        checkable CDATA #IMPLIED
+        image CDATA #IMPLIED
+        disabled CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- treerow -->
+<!ELEMENT treerow (%baseGroup; | treecell)*>
+<!ATTLIST treerow
+        %xulElementAttrGroup;
+>
+
+<!-- variables -->
+<!ELEMENT variables EMPTY>
+
+<!-- vbox -->
+<!ELEMENT vbox (#PCDATA | %anyGroup; | splitter)*>
+<!ATTLIST vbox
+        %xulElementAttrGroup;
+        spacing CDATA #IMPLIED
+        heights CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+        align (%packAttrType;) #IMPLIED
+        pack (%packAttrType;) #IMPLIED
+>
+
+<!-- west -->
+<!ELEMENT west (%anyGroup;)*>
+<!ATTLIST west
+        %xulElementAttrGroup;
+        flex CDATA #IMPLIED
+        size CDATA #IMPLIED
+        splittable CDATA #IMPLIED
+        collapsible CDATA #IMPLIED
+        margins CDATA #IMPLIED
+        open CDATA #IMPLIED
+        autoscroll CDATA #IMPLIED
+        border CDATA #IMPLIED
+        maxsize CDATA #IMPLIED
+        minsize CDATA #IMPLIED
+        onOpen CDATA #IMPLIED
+>
+
+<!-- window -->
+<!ELEMENT window (#PCDATA | %anyGroup; | caption )*>
+<!ATTLIST window
+        %xulElementAttrGroup;
+        border CDATA #IMPLIED
+        title CDATA #IMPLIED
+        ctrlKeys CDATA #IMPLIED
+        mode (embedded|modal|overlapped|popup) #IMPLIED
+        closable CDATA #IMPLIED
+        sizable CDATA #IMPLIED
+        position CDATA #IMPLIED
+        contentStyle CDATA #IMPLIED
+        defaultActionOnShow (moveDown|moveRight|moveDiagonal|appear|slideDown) #IMPLIED
+        onClick CDATA #IMPLIED
+        onRightClick CDATA #IMPLIED
+        onDoubleClick CDATA #IMPLIED
+        onOK CDATA #IMPLIED
+        onCancel CDATA #IMPLIED
+        onCtrlKey CDATA #IMPLIED
+        onMove CDATA #IMPLIED
+        onShow CDATA #IMPLIED
+        onClose CDATA #IMPLIED
+        onZIndex CDATA #IMPLIED
+        onBookmarkChanged CDATA #IMPLIED
+        onClientInfo CDATA #IMPLIED
+>
+
+<!-- zk -->
+<!ELEMENT zk (#PCDATA | %anyGroup; | area | bandpopup | caption | center | columns | column | comboitem | east| fisheyeitem | foot | footer | ginfo | gmarker | listcell | listfoot | listfooter | listhead | listheader | listitem | menu | menuitem | menuseparator | north | rows | row | splitter | south | tab | tabpanel | tabpanels | tabs | treecell | treechildren | treecol | treecols | treefoot | treefooter | treeitem | treerow | west)*>
+<!ATTLIST zk
+        %zkAttrGroup;
+>
+
+<!-- zscript -->
+<!ELEMENT zscript (#PCDATA)>
+<!ATTLIST zscript
+        %zkAttrGroup;
+        src CDATA #IMPLIED
+        deferred CDATA #IMPLIED
+>
+
+<!-- zkforge -->
+<!-- fckeditor -->
+<!ELEMENT fckeditor (%baseGroup;)*>
+<!ATTLIST fckeditor
+        %abstractComponentAttrGroup;
+        width CDATA #IMPLIED
+        height CDATA #IMPLIED
+        value CDATA #IMPLIED
+        toolbarSet CDATA #IMPLIED
+        onSave CDATA #IMPLIED
+        customConfigurationsPath CDATA #IMPLIED
+>
+
+<!-- fisheyeitem -->
+<!ELEMENT fisheyeitem (%baseGroup;)*>
+<!ATTLIST fisheyeitem
+        %abstractComponentAttrGroup;
+        label CDATA #IMPLIED
+        image CDATA #IMPLIED
+>
+
+<!-- fisheyelist -->
+<!ELEMENT fisheyelist (%baseGroup; | fisheyeitem)*>
+<!ATTLIST fisheyelist
+        %htmlBasedComponentAttrGroup;
+        itemWidth CDATA #IMPLIED
+        itemHeight CDATA #IMPLIED
+        itemMaxWidth CDATA #IMPLIED
+        itemMaxHeight CDATA #IMPLIED
+        itemPadding CDATA #IMPLIED
+        orient (vertical|horizontal) #IMPLIED
+        attachEdge CDATA #IMPLIED
+        labelEdge CDATA #IMPLIED
+>
+
+<!-- ginfo -->
+<!ELEMENT ginfo (%baseGroup;)*>
+<!ATTLIST ginfo
+        %htmlBasedComponentAttrGroup;
+        open CDATA #IMPLIED
+        lng CDATA #IMPLIED
+        lat CDATA #IMPLIED
+        content CDATA #IMPLIED
+>
+
+<!-- gmarker -->
+<!ELEMENT gmarker (%baseGroup;)*>
+<!ATTLIST gmarker
+        %htmlBasedComponentAttrGroup;
+        open CDATA #IMPLIED
+        lng CDATA #IMPLIED
+        lat CDATA #IMPLIED
+        content CDATA #IMPLIED 
+        iconAnchorX CDATA #IMPLIED
+        iconAnchorY CDATA #IMPLIED
+        iconDragCrossAnchorX CDATA #IMPLIED
+        iconDragCrossAnchorY CDATA #IMPLIED
+        iconDragCrossHeight CDATA #IMPLIED
+        iconDragCrossImage CDATA #IMPLIED
+        iconDragCrossWidth CDATA #IMPLIED
+        iconImage CDATA #IMPLIED
+        iconImageMap CDATA #IMPLIED
+        iconInfoAnchorX CDATA #IMPLIED
+        iconInfoAnchorY CDATA #IMPLIED
+        iconMaxHeight CDATA #IMPLIED
+        iconMozPrintImage CDATA #IMPLIED
+        iconPrintImage CDATA #IMPLIED
+        iconPrintShadow CDATA #IMPLIED
+        iconShadow CDATA #IMPLIED
+        iconShadowHeight CDATA #IMPLIED
+        iconShadowWidth CDATA #IMPLIED
+        iconHeight CDATA #IMPLIED
+        iconWidth CDATA #IMPLIED
+        iconTransparent CDATA #IMPLIED
+        onMarkerDrop CDATA #IMPLIED
+>
+
+<!-- gmaps -->
+<!ELEMENT gmaps (%baseGroup; | ginfo | gmarker | gpolyline)*>
+<!ATTLIST gmaps 
+        %htmlBasedComponentAttrGroup;
+        lat CDATA #IMPLIED
+        lng CDATA #IMPLIED
+        zoom CDATA #IMPLIED
+        showLargeCtrl CDATA #IMPLIED
+        showSmallCtrl CDATA #IMPLIED
+        showTypeCtrl CDATA #IMPLIED
+        mapType CDATA #IMPLIED
+        onMapMove CDATA #IMPLIED
+        onMapZoom CDATA #IMPLIED
+        onInfoChange CDATA #IMPLIED
+        onMapClick CDATA #IMPLIED
+        onMapDoubleClick CDATA #IMPLIED
+        onMarkerDrop CDATA #IMPLIED
+>
+
+<!-- gpolyline -->
+<!ELEMENT gpolyline (%baseGroup;)*>
+<!ATTLIST gpolyline
+        %htmlBasedComponentAttrGroup;
+        points CDATA #IMPLIED
+        color CDATA #IMPLIED
+        weight CDATA #IMPLIED
+        numLevels CDATA #IMPLIED
+>
+        
