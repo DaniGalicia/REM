@@ -254,6 +254,14 @@
                         <attr name="instanceOf" stringvalue="org.netbeans.lib.editor.hyperlink.spi.HyperlinkProvider"/>
                     </file>
                 </folder>
+                
+                <folder name="CompletionProviders">
+                    <file name="CountriesCompletionProvider.instance">
+                        <attr name="instanceClass" stringvalue="net.sf.rem.editor.CountriesCompletionProvider"/>
+                        <attr name="instanceOf" stringvalue="org.netbeans.spi.editor.completion.CompletionProvider"/>
+                    </file>
+                </folder>
+                
             </folder>
             <!-- use editor features for java file -->
             <folder name="x-zs">
