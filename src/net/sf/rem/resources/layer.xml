@@ -256,8 +256,8 @@
                 </folder>
                 
                 <folder name="CompletionProviders">
-                    <file name="CountriesCompletionProvider.instance">
-                        <attr name="instanceClass" stringvalue="net.sf.rem.editor.CountriesCompletionProvider"/>
+                    <file name="ZulCompletionProvider.instance">
+                        <attr name="instanceClass" stringvalue="net.sf.rem.editor.ZulCompletionProvider"/>
                         <attr name="instanceOf" stringvalue="org.netbeans.spi.editor.completion.CompletionProvider"/>
                     </file>
                 </folder>
