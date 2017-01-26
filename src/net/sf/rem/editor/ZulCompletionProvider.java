@@ -5,29 +5,40 @@
  */
 package net.sf.rem.editor;
 
+import com.sun.source.tree.ClassTree;
+import com.sun.source.util.TreePathScanner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import org.netbeans.api.io.IOProvider;
+import org.netbeans.api.io.InputOutput;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.java.source.ClassIndex;
 import org.netbeans.api.java.source.ClasspathInfo;
+import org.netbeans.api.java.source.CompilationInfo;
 import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.TokenItem;
 import org.netbeans.editor.Utilities;
 import org.netbeans.editor.ext.ExtSyntaxSupport;
+import org.netbeans.modules.java.source.parsing.CompilationInfoImpl;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
+import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 
@@ -36,7 +47,7 @@ import org.openide.loaders.DataObject;
  * @author galicia
  */
 public class ZulCompletionProvider implements CompletionProvider {
-    private List<String> packages;
+    private List<String> clases=new ArrayList<String>();
     public int getAutoQueryTypes(JTextComponent jtc, String string) {
         return 0;
     }
@@ -48,31 +59,34 @@ public class ZulCompletionProvider implements CompletionProvider {
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
             @Override
             protected void query(CompletionResultSet crs, Document document, int i) {
-                FileObject fo = GlobalPathRegistry.getDefault().findResource("/");
-                
-                ClassPath bootCp = ClassPath.getClassPath(fo, ClassPath.BOOT);
-                ClassPath compileCp = ClassPath.getClassPath(fo, ClassPath.COMPILE);
-                ClassPath sourcePath = ClassPath.getClassPath(fo, ClassPath.SOURCE);
-               
-                final ClasspathInfo info = ClasspathInfo.create(bootCp, compileCp, sourcePath);
-                final Set<ElementHandle<TypeElement>> result = info.getClassIndex().getDeclaredTypes("", ClassIndex.NameKind.PREFIX, EnumSet.of(ClassIndex.SearchScope.SOURCE, ClassIndex.SearchScope.DEPENDENCIES));
-                HtmlAtribute htmlAtribute=getAttribute(document, i);
-
-                for (ElementHandle<TypeElement> te : result) {
-                   
-                    
-                    String binaryName = te.getBinaryName();
-                    String[] text=binaryName.split("\\.");
-                    String 
-                    className=text[text.length-1];
-                    if(!binaryName.equals("") && className.startsWith(htmlAtribute.getValue()) ){
-                            //Removiendo el paquete
-                            ZulCompletionItem item =  new ZulCompletionItem(text[text.length-1], i);                         
-                            crs.setDocumentation(new ZulCompletionDocumentation(item));
-                            crs.addItem(item);
-                    }
-                        
+                if(clases.isEmpty()){
+                    findClasses();
                 }
+                
+                HtmlAtribute htmlAtribute=getAttribute(document, i);
+                for(String clase:clases){
+                    int point =clase.lastIndexOf("\\.");
+                    String className = clase.substring(point);
+                    FileObject fileObject = GlobalPathRegistry.getDefault().findResource(clase.replaceAll("\\.", "/")+".java");
+                    JavaSource javaSource = JavaSource.forFileObject(fileObject);
+                   
+                }
+
+//                for (ElementHandle<TypeElement> te : result) {
+//                   
+//                    
+//                    String binaryName = te.getBinaryName();
+//                    String[] text=binaryName.split("\\.");
+//                    String 
+//                    className=text[text.length-1];
+//                    if(!binaryName.equals("") && className.startsWith(htmlAtribute.getValue()) ){
+//                            //Removiendo el paquete
+//                            ZulCompletionItem item =  new ZulCompletionItem(text[text.length-1], i);                         
+//                            crs.setDocumentation(new ZulCompletionDocumentation(item));
+//                            crs.addItem(item);
+//                    }
+//                        
+//                }
                 
                 crs.finish();
             }
@@ -179,9 +193,9 @@ public class ZulCompletionProvider implements CompletionProvider {
         }
         return null;
     }
-
+    
     private void getProjectPackages(){
-        packages = new ArrayList<String>();
+        clases = new ArrayList<String>();
         FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
         File ruta= new File(foClass.getPath());
         ruta = ruta.getParentFile();
@@ -190,6 +204,7 @@ public class ZulCompletionProvider implements CompletionProvider {
         
         for(File file:ruta.listFiles()){
             if(file.isDirectory()){
+                String className=file.getName();
                 
             }
         }
@@ -197,4 +212,87 @@ public class ZulCompletionProvider implements CompletionProvider {
         
         
     }
+    
+       //Buscando los archivos java
+    private static List<File> getJavaFileList(File folder){
+        List resultado = new ArrayList();
+        if(!folder.exists() || !folder.isDirectory())
+            return resultado;
+        
+        for(File archivo:folder.listFiles()){
+            if(archivo.isFile()){
+                if(archivo.getName().endsWith(".java") || archivo.getName().endsWith(".JAVA")){
+                    resultado.add(archivo);
+                }
+            }else{
+                resultado.addAll(getJavaFileList(archivo));
+            }
+        }
+        
+        
+        return resultado;
+    }
+    
+    public void findClasses(){
+        FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
+        File folder= new File(foClass.getPath());
+        for(File file:getJavaFileList(folder)){
+            String name=file.getAbsolutePath();
+            
+            String busq="\\src\\java\\";
+             int i;
+            if(name.contains(busq)){
+                i=name.indexOf(busq);          
+                name = name.substring(i + busq.length());
+                
+            }
+            clases.add(name);
+        }
+    }
+    
+    
+    private class MemberVisitor extends TreePathScanner<Void, Void> {
+
+        private CompilationInfo info;
+
+        public MemberVisitor(CompilationInfo info) {
+            this.info = info;
+        }
+
+        @Override
+        public Void visitClass(ClassTree node, Void p) {
+            Element el = (Element) info.getTrees().getElement(getCurrentPath());
+
+            if (el == null) {
+                StatusDisplayer.getDefault().setStatusText("No se puede resolver la clase");
+
+            } else {
+                TypeElement te = (TypeElement) el;
+
+                List<? extends Element> enclosedElements = te.getEnclosedElements();
+
+                InputOutput io = IOProvider.getDefault().getIO("Analysis of "
+                        + info.getFileObject().getName(), true);
+                
+                for (int i = 0; i < enclosedElements.size(); i++) {
+                    Element enclosedElement = (Element) enclosedElements.get(i);
+                    if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
+                        io.getOut().println("Constructor: " + enclosedElement.getSimpleName());
+                    } else if (enclosedElement.getKind() == ElementKind.METHOD) {
+                        ExecutableElement ex = (ExecutableElement) enclosedElement;
+                        io.getOut().println("Method: " + enclosedElement.getSimpleName() + " " + ex.getReturnType().toString());
+                    } else if (enclosedElement.getKind().isField()) {
+                        io.getOut().println("Field: " + enclosedElement.getSimpleName());
+                    } else {
+                        System.out.println("Other: " + enclosedElement.getSimpleName());
+                    }
+                }
+                io.getOut().close();
+            }
+            return null;
+        }
+
+    }
+
+    
 }
