@@ -8,6 +8,7 @@ package net.sf.rem.editor;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.util.TreePathScanner;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -19,8 +20,6 @@ import javax.lang.model.element.TypeElement;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import org.netbeans.api.io.IOProvider;
-import org.netbeans.api.io.InputOutput;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.java.source.ClassIndex;
@@ -62,14 +61,19 @@ public class ZulCompletionProvider implements CompletionProvider {
                 if(clases.isEmpty()){
                     findClasses();
                 }
-                
+              // clases.clear();
                 HtmlAtribute htmlAtribute=getAttribute(document, i);
                 for(String clase:clases){
-                    int point =clase.lastIndexOf("\\.");
-                    String className = clase.substring(point);
-                    FileObject fileObject = GlobalPathRegistry.getDefault().findResource(clase.replaceAll("\\.", "/")+".java");
-                    JavaSource javaSource = JavaSource.forFileObject(fileObject);
-                   
+                    int point =clase.lastIndexOf(".");
+                    
+                    String className = clase.substring(0,point);
+                    point =className.lastIndexOf(".");
+                    className =className = clase.substring(point);
+                    //FileObject fileObject = GlobalPathRegistry.getDefault().findResource(clase.replaceAll("\\.", "/")+".java");
+                    //JavaSource javaSource = JavaSource.forFileObject(fileObject);
+                   ZulCompletionItem item =  new ZulCompletionItem(className, i);     
+                   crs.addItem(item);
+                    crs.setDocumentation(new ZulCompletionDocumentation(item));
                 }
 
 //                for (ElementHandle<TypeElement> te : result) {
@@ -94,18 +98,6 @@ public class ZulCompletionProvider implements CompletionProvider {
         
     }
 
-    private FileObject getFO(Document doc) {
-        Object sdp = doc.getProperty(Document.StreamDescriptionProperty);
-        if (sdp instanceof FileObject) {
-            return (FileObject) sdp;
-        }
-        if (sdp instanceof DataObject) {
-            DataObject dobj = (DataObject) sdp;
-            return dobj.getPrimaryFile();
-        }
-        return null;
-    }
-    
     private static HtmlAtribute getAttribute(Document doc, int offset) {
         String attribute = null;
         String value = null;
@@ -161,7 +153,6 @@ public class ZulCompletionProvider implements CompletionProvider {
 
             // Find value
             value = token.getImage();
-            //System.out.println("value:" + value);
             if (value != null) {
                 value = value.trim();
                 valueOffset = token.getOffset();
@@ -236,6 +227,12 @@ public class ZulCompletionProvider implements CompletionProvider {
     public void findClasses(){
         FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
         File folder= new File(foClass.getPath());
+
+        if(folder.getPath().endsWith("web")){
+           folder = new File(folder.getParent() +"/src/java/");
+        }
+
+        
         for(File file:getJavaFileList(folder)){
             String name=file.getAbsolutePath();
             
@@ -244,55 +241,10 @@ public class ZulCompletionProvider implements CompletionProvider {
             if(name.contains(busq)){
                 i=name.indexOf(busq);          
                 name = name.substring(i + busq.length());
-                
+                name = name.replaceAll("\\\\",".");
             }
             clases.add(name);
         }
     }
-    
-    
-    private class MemberVisitor extends TreePathScanner<Void, Void> {
-
-        private CompilationInfo info;
-
-        public MemberVisitor(CompilationInfo info) {
-            this.info = info;
-        }
-
-        @Override
-        public Void visitClass(ClassTree node, Void p) {
-            Element el = (Element) info.getTrees().getElement(getCurrentPath());
-
-            if (el == null) {
-                StatusDisplayer.getDefault().setStatusText("No se puede resolver la clase");
-
-            } else {
-                TypeElement te = (TypeElement) el;
-
-                List<? extends Element> enclosedElements = te.getEnclosedElements();
-
-                InputOutput io = IOProvider.getDefault().getIO("Analysis of "
-                        + info.getFileObject().getName(), true);
-                
-                for (int i = 0; i < enclosedElements.size(); i++) {
-                    Element enclosedElement = (Element) enclosedElements.get(i);
-                    if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
-                        io.getOut().println("Constructor: " + enclosedElement.getSimpleName());
-                    } else if (enclosedElement.getKind() == ElementKind.METHOD) {
-                        ExecutableElement ex = (ExecutableElement) enclosedElement;
-                        io.getOut().println("Method: " + enclosedElement.getSimpleName() + " " + ex.getReturnType().toString());
-                    } else if (enclosedElement.getKind().isField()) {
-                        io.getOut().println("Field: " + enclosedElement.getSimpleName());
-                    } else {
-                        System.out.println("Other: " + enclosedElement.getSimpleName());
-                    }
-                }
-                io.getOut().close();
-            }
-            return null;
-        }
-
-    }
-
-    
+   
 }
