@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
@@ -16,6 +17,7 @@ import org.netbeans.api.editor.completion.Completion;
 import org.netbeans.spi.editor.completion.CompletionItem;
 import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.CompletionUtilities;
+import org.openide.util.ImageUtilities;
 
 /**
  *
@@ -25,10 +27,14 @@ public class ZulCompletionItem implements CompletionItem{
     private String text;
     private static Color fieldColor = Color.decode("0x0000B2");
     private int caretOffset;
+     private ImageIcon fieldIcon;
 
-    public ZulCompletionItem(String text, int caretOffset) {
+    public ZulCompletionItem(String text, int caretOffset,String iconName) {
         this.text = text;
         this.caretOffset = caretOffset;
+        if(iconName!=null){
+           fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/"+ iconName));
+        }
     }
 
     @Override
@@ -55,7 +61,7 @@ public class ZulCompletionItem implements CompletionItem{
 
     @Override
     public void render(Graphics g, Font defaultFont, Color defaultColor,Color backgroundColor, int width, int height, boolean selected) { 
-        CompletionUtilities.renderHtml(null, text, null, g, defaultFont,
+        CompletionUtilities.renderHtml(fieldIcon, text, null, g, defaultFont,
             (selected ? Color.white : fieldColor), width, height, selected);
     }
 

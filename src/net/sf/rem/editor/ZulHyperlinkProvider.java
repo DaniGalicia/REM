@@ -29,8 +29,6 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import net.sf.rem.loaders.ZulDataObject;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.TokenItem;
 import org.netbeans.editor.Utilities;
