@@ -8,35 +8,26 @@ package net.sf.rem.editor;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.util.TreePathScanner;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
-import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.CompilationInfo;
-import org.netbeans.api.java.source.JavaSource;
-import org.netbeans.api.java.source.Task;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.TokenItem;
 import org.netbeans.editor.Utilities;
 import org.netbeans.editor.ext.ExtSyntaxSupport;
-import org.netbeans.modules.classfile.ClassFile;
 import org.netbeans.spi.editor.completion.CompletionProvider;
 import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
 import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
-import org.openide.awt.StatusDisplayer;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
+import org.openide.loaders.DataObject;
 
 /**
  *
@@ -45,6 +36,7 @@ import org.openide.util.Exceptions;
 public class ZulCompletionProvider implements CompletionProvider {
 
     private List<String> clases = new ArrayList<String>();
+    private String JavaClassPath;
 
     public int getAutoQueryTypes(JTextComponent jtc, String string) {
         return 0;
@@ -54,12 +46,25 @@ public class ZulCompletionProvider implements CompletionProvider {
         if (queryType != CompletionProvider.COMPLETION_QUERY_TYPE) {
             return null;
         }
+        
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
             @Override
             protected void query(CompletionResultSet crs, Document document, int i) {
                 if (clases.isEmpty()) {
                     findClasses();
                 }
+                               
+                FileObject foClass = getFO(document); //GlobalPathRegistry.getDefault().findResource("/");
+                ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
+                
+                for(FileObject root:sourcePath.getRoots()){
+                    if(root.getPath().endsWith("java")){
+                        JavaClassPath=root.getPath();
+                    }
+                }
+               
+                
+                
 
                 // clases.clear();
                 HtmlAtribute htmlAtribute = getAttribute(document, i);
@@ -92,16 +97,16 @@ public class ZulCompletionProvider implements CompletionProvider {
                         crs.addItem(item);
                         crs.setDocumentation(new ZulCompletionDocumentation(item));
                     }
- ClassFile c=null;
-                    try {
-                        //Codigo para buscar metodos
-                        c = new ClassFile(new File("C:/Users/galicia/Documents/NetBeansProjects/REM/build/classes/net/sf/rem/editor/ZulCompletionItem.class"),false);
-                    } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-                    c=c;
-                    System.out.println();
-                    JOptionPane.showMessageDialog(null, c.getMethods());
+// ClassFile c=null;
+//                    try {
+//                        //Codigo para buscar metodos
+//                        c = new ClassFile(new File("C:/Users/galicia/Documents/NetBeansProjects/REM/build/classes/net/sf/rem/editor/ZulCompletionItem.class"),false);
+//                    } catch (IOException ex) {
+//                        Exceptions.printStackTrace(ex);
+//                    }
+//                    c=c;
+
+
                 }
 
                 crs.finish();
@@ -234,8 +239,7 @@ public class ZulCompletionProvider implements CompletionProvider {
     }
 
     public void findClasses() {
-        FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
-        File folder = new File(foClass.getPath());
+        File folder = new File(JavaClassPath);
 
         if (folder.getPath().endsWith("web")) {
             folder = new File(folder.getParent() + "/src/java/");
@@ -296,6 +300,18 @@ public class ZulCompletionProvider implements CompletionProvider {
             return null;
         }
 
+    }
+    
+    private FileObject getFO(Document doc) {
+        Object sdp = doc.getProperty(Document.StreamDescriptionProperty);
+        if (sdp instanceof FileObject) {
+            return (FileObject) sdp;
+        }
+        if (sdp instanceof DataObject) {
+            DataObject dobj = (DataObject) sdp;
+            return dobj.getPrimaryFile();
+        }
+        return null;
     }
 
 }

@@ -28,6 +28,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import net.sf.rem.loaders.ZulDataObject;
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.TokenItem;
@@ -53,6 +54,7 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
 
     private static Hashtable<String, Integer> hyperlinkTable;
     private final int JAVA_CLASS = 0;
+    private String javaClassPath;
     private final int RESOURCE_PATH = 2;
 
     {
@@ -97,19 +99,27 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
     }
 
     public void performClickAction(Document doc, int offset) {
+                       FileObject foClass = getFO(doc); //GlobalPathRegistry.getDefault().findResource("/");
+                ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
+                
+                for(FileObject root:sourcePath.getRoots()){
+                    if(root.getPath().endsWith("java")){
+                        javaClassPath=root.getPath();
+                    }
+                }
+               
         if (hyperlinkTable.get(av[0]) != null) {
             int type = ((Integer) hyperlinkTable.get(av[0])).intValue();
             switch (type) {
                 case JAVA_CLASS:
-                    FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
-                    File ruta= new File(foClass.getPath());
+                    //FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
                     String oldAttrValue = av[1];
                     
                     oldAttrValue = oldAttrValue.replace("${","");
                     oldAttrValue = oldAttrValue.replace("}", "");
                     oldAttrValue = oldAttrValue.substring(0,1).toUpperCase() + oldAttrValue.substring(1);
                     oldAttrValue = oldAttrValue.replace("/", ".");
-                    List<String> archivos = getJavaFiles(ruta.getParent()+"/src/java",oldAttrValue +".java");
+                    List<String> archivos = getJavaFiles(javaClassPath,oldAttrValue +".java");
          
                     if(!archivos.isEmpty()){
                                             
@@ -329,5 +339,17 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
         
         
         return resultado;
+    }
+    
+        private FileObject getFO(Document doc) {
+        Object sdp = doc.getProperty(Document.StreamDescriptionProperty);
+        if (sdp instanceof FileObject) {
+            return (FileObject) sdp;
+        }
+        if (sdp instanceof DataObject) {
+            DataObject dobj = (DataObject) sdp;
+            return dobj.getPrimaryFile();
+        }
+        return null;
     }
 }
