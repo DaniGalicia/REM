@@ -16,6 +16,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.api.io</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.2.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.api.java</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -48,6 +56,15 @@
                     <run-dependency>
                         <release-version>1</release-version>
                         <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.api.xml.ui</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.43.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -175,6 +192,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.java.source.base</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>2.9.1.2.2.25.8.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.java.sourceui</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -235,6 +260,14 @@
                     <run-dependency>
                         <release-version>2</release-version>
                         <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.xml.catalog.ui</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>2.2.1.4</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -309,7 +342,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <implementation-version/>
+                        <specification-version>9.8.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -350,6 +383,14 @@
                     <compile-dependency/>
                     <run-dependency>
                         <implementation-version/>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.util.ui</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>9.4.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>

@@ -1,21 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package net.sf.rem.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- *
- * @author galicia
- */
 public class HtmlTag {
     private String name;
-    private List<HtmlAtribute> attributes=new ArrayList<HtmlAtribute>();
-    private List<HtmlTag> children = new ArrayList<HtmlTag>();
+    private HtmlTag padre;
+
+    public HtmlTag(String name) {
+        this.name = name;
+    }
+    
     public String getName() {
         return name;
     }
@@ -25,19 +18,18 @@ public class HtmlTag {
         
     }
 
-    public List<HtmlAtribute> getAttributes() {
-        return attributes;
+    public HtmlTag getPadre() {
+        return padre;
     }
 
-    public void setAttributes(List<HtmlAtribute> attributes) {
-        this.attributes = attributes;
+    public void setPadre(HtmlTag padre) {
+        this.padre = padre;
     }
 
-    public List<HtmlTag> getChildren() {
-        return children;
+    @Override
+    public String toString() {
+        return "HtmlTag{" + "name=" + name + ", padre=" + padre + '}';
     }
 
-    public void setChildren(List<HtmlTag> children) {
-        this.children = children;
-    }   
+    
 }

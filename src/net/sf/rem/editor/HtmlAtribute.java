@@ -1,5 +1,7 @@
 package net.sf.rem.editor;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 /**
  *
  * @author galicia
@@ -7,8 +9,10 @@ package net.sf.rem.editor;
 public class HtmlAtribute{
     private String name;
     private String value;
+    private HtmlTag etiqueta;
 
-    public HtmlAtribute() {
+    public HtmlAtribute(String name) {
+        this.name=name;
     }
 
     public HtmlAtribute(String name, String value) {
@@ -20,16 +24,27 @@ public class HtmlAtribute{
         return name;
     }
     
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getValue() {
         return value;
     }
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "HtmlAtribute{" + "name=" + name + ", etiqueta=" + etiqueta + '}';
+    }
+
+
+
+    public HtmlTag getEtiqueta() {
+        return etiqueta;
+    }
+
+    public void setEtiqueta(HtmlTag etiqueta) {
+        this.etiqueta = etiqueta;
     }
     
     

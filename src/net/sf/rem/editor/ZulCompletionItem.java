@@ -11,11 +11,15 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.completion.Completion;
 import org.netbeans.spi.editor.completion.CompletionItem;
+import org.netbeans.spi.editor.completion.CompletionResultSet;
 import org.netbeans.spi.editor.completion.CompletionTask;
+import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
+import org.netbeans.spi.editor.completion.support.AsyncCompletionTask;
 import org.netbeans.spi.editor.completion.support.CompletionUtilities;
 import org.openide.util.ImageUtilities;
 
@@ -23,17 +27,18 @@ import org.openide.util.ImageUtilities;
  *
  * @author galicia
  */
-public class ZulCompletionItem implements CompletionItem{
+public class ZulCompletionItem implements CompletionItem {
+
     private String text;
     private static Color fieldColor = Color.decode("0x0000B2");
     private int caretOffset;
-     private ImageIcon fieldIcon;
+    private ImageIcon fieldIcon;
 
-    public ZulCompletionItem(String text, int caretOffset,String iconName) {
+    public ZulCompletionItem(String text, int caretOffset, String iconName) {
         this.text = text;
         this.caretOffset = caretOffset;
-        if(iconName!=null){
-           fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/"+ iconName));
+        if (iconName != null) {
+            fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/" + iconName));
         }
     }
 
@@ -51,7 +56,7 @@ public class ZulCompletionItem implements CompletionItem{
 
     @Override
     public void processKeyEvent(KeyEvent ke) {
-        
+
     }
 
     @Override
@@ -60,14 +65,20 @@ public class ZulCompletionItem implements CompletionItem{
     }
 
     @Override
-    public void render(Graphics g, Font defaultFont, Color defaultColor,Color backgroundColor, int width, int height, boolean selected) { 
+    public void render(Graphics g, Font defaultFont, Color defaultColor, Color backgroundColor, int width, int height, boolean selected) {
         CompletionUtilities.renderHtml(fieldIcon, text, null, g, defaultFont,
-            (selected ? Color.white : fieldColor), width, height, selected);
+                (selected ? Color.white : fieldColor), width, height, selected);
     }
 
     @Override
     public CompletionTask createDocumentationTask() {
-        return null;
+        return new AsyncCompletionTask(new AsyncCompletionQuery() {
+            @Override
+            protected void query(CompletionResultSet completionResultSet, Document document, int i) {
+                completionResultSet.setDocumentation(new ZulCompletionDocumentation(ZulCompletionItem.this));
+                completionResultSet.finish();
+            }
+        });
     }
 
     @Override
@@ -87,7 +98,7 @@ public class ZulCompletionItem implements CompletionItem{
 
     @Override
     public CharSequence getSortText() {
-        return  text;
+        return text;
     }
 
     @Override
@@ -102,7 +113,5 @@ public class ZulCompletionItem implements CompletionItem{
     public void setText(String text) {
         this.text = text;
     }
-    
-    
-    
+
 }
