@@ -16,7 +16,6 @@
  *   with this program; if not, write to the Free Software Foundation, Inc.,
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package net.sf.rem.editor;
 
 import java.io.File;
@@ -40,6 +39,7 @@ import org.netbeans.modules.web.api.webmodule.WebModule;
 import org.openide.ErrorManager;
 import org.openide.cookies.OpenCookie;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.Node;
@@ -47,14 +47,17 @@ import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
 /**
- * Provide code hyperlink for zul files. 
+ * Provide code hyperlink for zul files.
+ *
  * @author magic
  */
 public class ZulHyperlinkProvider implements HyperlinkProvider {
 
     private static Hashtable<String, Integer> hyperlinkTable;
+
     private final int JAVA_CLASS = 0;
     private String javaClassPath;
+    private List<String> clases=new ArrayList<String>();
     private final int RESOURCE_PATH = 2;
 
     {
@@ -72,7 +75,9 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
     private int valueOffset;
     private String[] av = null;
 
-    /** Creates a new instance of ZulHyperlinkProvider */
+    /**
+     * Creates a new instance of ZulHyperlinkProvider
+     */
     public ZulHyperlinkProvider() {
     }
 
@@ -99,36 +104,30 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
     }
 
     public void performClickAction(Document doc, int offset) {
-                       FileObject foClass = getFO(doc); //GlobalPathRegistry.getDefault().findResource("/");
-                ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
-                
-                for(FileObject root:sourcePath.getRoots()){
-                    if(root.getPath().endsWith("java")){
-                        javaClassPath=root.getPath();
-                    }
-                }
-               
+        FileObject foClass = ZulEditorUtilities.getFO(doc); //GlobalPathRegistry.getDefault().findResource("/");
+        ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
+
+        for (FileObject root : sourcePath.getRoots()) {
+            if (root.getPath().endsWith("java")) {
+                javaClassPath = root.getPath();
+            }
+        }
+
         if (hyperlinkTable.get(av[0]) != null) {
             int type = ((Integer) hyperlinkTable.get(av[0])).intValue();
             switch (type) {
                 case JAVA_CLASS:
                     //FileObject foClass = GlobalPathRegistry.getDefault().findResource("/");
                     String oldAttrValue = av[1];
-                    
-                    oldAttrValue = oldAttrValue.replace("${","");
+
+                    oldAttrValue = oldAttrValue.replace("${", "");
                     oldAttrValue = oldAttrValue.replace("}", "");
-                    oldAttrValue = oldAttrValue.substring(0,1).toUpperCase() + oldAttrValue.substring(1);
+                    oldAttrValue = oldAttrValue.substring(0, 1).toUpperCase() + oldAttrValue.substring(1);
                     oldAttrValue = oldAttrValue.replace("/", ".");
-                    List<String> archivos = getJavaFiles(javaClassPath,oldAttrValue +".java");
-         
-                    if(!archivos.isEmpty()){
-                                            
-                    String clase = archivos.get(0).replace("\\",".");
-                    clase =clase.replace(".java", "");
-           
-                        av[1]=clase;
-                    }             
-                    findJavaClass(av[1], doc);
+                    
+                    //La lista de clases
+                    clases = ZulEditorUtilities.findClasses(javaClassPath, true);
+                    findJavaClass(oldAttrValue);
                     break;
                 case RESOURCE_PATH:
                     findResourcePath(av[1], (BaseDocument) doc);
@@ -160,10 +159,9 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
                     "class", // "class" in <?component ?>, <?init ?> or <?variable-resolver ?>
                     "zscript", // "zscript" in <?init ?>
                     "uri", // "uri" in <?import ?>
-                    "href"
-                , // "href" in <?link ?> 
-                   };
-                
+                    "href", // "href" in <?link ?> 
+                };
+
                 String content = token.getImage().trim();
                 int index = -1;
                 for (String attr : ATTRS) {
@@ -229,9 +227,29 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
         return null;
     }
 
-    private void findJavaClass(String fqn, Document doc) { 
-        OpenJavaClassThread run = new OpenJavaClassThread(fqn, (BaseDocument) doc);
-        RequestProcessor.getDefault().post(run);
+    private void findJavaClass(String fqn) {
+        File f=null;
+        for(String file:clases){
+            String busq = "\\src\\java\\";
+            String className=file;
+                int i;
+                if (className.contains(busq)) {
+                    i = className.indexOf(busq);
+                    className = className.substring(i + busq.length());
+                    className = className.replaceAll("\\\\", ".");
+                    className=className.replace(".java", "");
+                    i=className.lastIndexOf(".");                   
+                    className=className.substring(i+1);
+                }          
+            if(className.toLowerCase().startsWith(fqn.toLowerCase())){
+                f=new File(file);
+                break;
+            }
+        }
+        if(f!=null){
+            OpenJavaClassThread run = new OpenJavaClassThread(f);
+            RequestProcessor.getDefault().post(run);
+        }
     }
 
     private void findResourcePath(String path, BaseDocument doc) {
@@ -273,83 +291,25 @@ public class ZulHyperlinkProvider implements HyperlinkProvider {
 
     private class OpenJavaClassThread implements Runnable {
 
-        private String fqn;
-        private BaseDocument doc;
+        private File file;
 
-        public OpenJavaClassThread(String name, BaseDocument doc) {
+        public OpenJavaClassThread(File file) {
             super();
-            this.fqn = name;
-            this.doc = doc;
+            this.file = file;
         }
 
         public void run() {
-            FileObject foClass = GlobalPathRegistry.getDefault().findResource(fqn.replaceAll("\\.", "/")+".java");
-         
-            if (foClass != null) {
-                openInEditor(foClass);
+            FileObject fileObject=FileUtil.toFileObject(file);
+
+            if (fileObject != null) {
+                openInEditor(fileObject);
             } else {
                 String key = "goto_resource_not_found"; // NOI18N
                 String msg = NbBundle.getBundle(ZulHyperlinkProvider.class).getString(key);
-                org.openide.awt.StatusDisplayer.getDefault().setStatusText(MessageFormat.format(msg, new Object[]{fqn}));
+                org.openide.awt.StatusDisplayer.getDefault().setStatusText(MessageFormat.format(msg, new Object[]{file.getName()}));
             }
 
         }
     }
-    
-    //Buscando los archivos java
-    private static List<File> getJavaFileList(String ruta,String filtro){
-        List resultado = new ArrayList();
-        File folder = new File(ruta);
-        if(!folder.exists() || !folder.isDirectory())
-            return resultado;
-        
-        for(File archivo:folder.listFiles()){
-            System.out.println(archivo.getAbsolutePath());
-            if(archivo.isFile()){
-                if(archivo.getName().endsWith(".java") || archivo.getName().endsWith(".JAVA")){
-                    if(archivo.getName().equals(filtro)){
-                        resultado.add(archivo);
-                    }
-                }
-            }else{
-                resultado.addAll(getJavaFileList(archivo.getAbsolutePath(), filtro));
-            }
-        }
-        
-        
-        return resultado;
-    }
-    
-    public static List<String> getJavaFiles(String ruta, String filtro){
-        List<String> resultado=new ArrayList<String>();
-        List<File> x = getJavaFileList(ruta, filtro);
-        
-        for(File file:x){
-            String name=file.getAbsolutePath();
-            
-            String busq="\\src\\java\\";
-             int i;
-            if(name.contains(busq)){
-                i=name.indexOf(busq);          
-                name = name.substring(i + busq.length());
-                
-            }
-            resultado.add(name);
-        }
-        
-        
-        return resultado;
-    }
-    
-        private FileObject getFO(Document doc) {
-        Object sdp = doc.getProperty(Document.StreamDescriptionProperty);
-        if (sdp instanceof FileObject) {
-            return (FileObject) sdp;
-        }
-        if (sdp instanceof DataObject) {
-            DataObject dobj = (DataObject) sdp;
-            return dobj.getPrimaryFile();
-        }
-        return null;
-    }
+ 
 }

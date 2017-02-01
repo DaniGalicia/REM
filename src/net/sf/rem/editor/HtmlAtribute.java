@@ -46,7 +46,7 @@ public class HtmlAtribute{
     public void setEtiqueta(HtmlTag etiqueta) {
         this.etiqueta = etiqueta;
     }
-    
-    
+
+
     
 }

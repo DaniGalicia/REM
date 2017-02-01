@@ -33,6 +33,7 @@ public class MemberVisitor extends TreePathScanner<Void, Void> {
     private List<String> clases;
     private String javaClassPath;
     private int caretOfseet;
+    private int removeFrom;
     CompletionResultSet completionResultSet;
 
     public MemberVisitor(CompilationInfo info, String next, List clases, String classPath,CompletionResultSet crs,int caretoffset) {
@@ -76,9 +77,8 @@ public class MemberVisitor extends TreePathScanner<Void, Void> {
                             javaSource.runUserActionTask(new Task<CompilationController>() {
                                 @Override
                                 public void run(CompilationController compilationController) throws Exception {
-
                                     compilationController.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                                    new MemberVisitor(compilationController, next, clases, javaClassPath,completionResultSet,caretOfseet).scan(compilationController.getCompilationUnit(), null);
+                                    new MemberVisitor(compilationController, next, clases, javaClassPath,completionResultSet,caretOfseet ).scan(compilationController.getCompilationUnit(), null);
 
                                 }
                             }, true);

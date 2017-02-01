@@ -64,25 +64,16 @@ public class ZulCompletionProvider implements CompletionProvider {
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
             @Override
             protected void query(CompletionResultSet crs, Document document, int i) {
-                String newJavaClassPath = "";
-                FileObject foClass = getFO(document);
+                FileObject foClass = ZulEditorUtilities.getFO(document);
                 ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
 
                 for (FileObject root : sourcePath.getRoots()) {
                     if (root.getPath().endsWith("java")) {
-                        newJavaClassPath = root.getPath();
+                        javaClassPath = root.getPath();
                     }
                 }
-                //Verificando  si no ha cambiado de proyecto
-                if (javaClassPath == null) {
-                    javaClassPath = newJavaClassPath;
-                    findClasses();
-                }
-                if (!newJavaClassPath.equals(javaClassPath)) {
-                    javaClassPath = newJavaClassPath;
-                    findClasses();
-                }
-
+                clases=  ZulEditorUtilities.findClasses(javaClassPath,false);
+      
                 // Recuperando el atributo donde se hizo click
                 etiquetas.clear();
                 atributos.clear();
@@ -249,6 +240,8 @@ public class ZulCompletionProvider implements CompletionProvider {
                 }
                 value = value.trim();
             }
+            
+            int offsetValue=token.getOffset();
 
             // Find attribute
             while (token != null && token.getTokenID().getNumericID() != ZulEditorUtilities.XML_ATTRIBUTE) {
@@ -261,6 +254,7 @@ public class ZulCompletionProvider implements CompletionProvider {
             if (attribute == null) {
                 return null;
             }
+            
             return new HtmlAtribute(attribute, value);
         } catch (BadLocationException ex) {
             ex.printStackTrace();
@@ -415,70 +409,6 @@ public class ZulCompletionProvider implements CompletionProvider {
         return token;
     }
 
-    /**
-     *
-     * @param folder Directorio
-     * @return Lista de archivos java contenidos en ese directorio
-     */
-    private static List<File> getJavaFileList(File folder) {
-        List resultado = new ArrayList();
-        if (!folder.exists() || !folder.isDirectory()) {
-            return resultado;
-        }
-
-        for (File archivo : folder.listFiles()) {
-            if (archivo.isFile()) {
-                if (archivo.getName().endsWith(".java") || archivo.getName().endsWith(".JAVA")) {
-                    resultado.add(archivo);
-                }
-            } else {
-                resultado.addAll(getJavaFileList(archivo));
-            }
-        }
-
-        return resultado;
-    }
-
-    /**
-     * Llena la lista de archivos java contenidos en el proyecto
-     */
-    public void findClasses() {
-        clases.clear();
-        File folder = new File(javaClassPath);
-
-        if (folder.getPath().endsWith("web")) {
-            folder = new File(folder.getParent() + "/src/java/");
-        }
-
-        for (File file : getJavaFileList(folder)) {
-            String name = file.getAbsolutePath();
-
-            String busq = "\\src\\java\\";
-            int i;
-            if (name.contains(busq)) {
-                i = name.indexOf(busq);
-                name = name.substring(i + busq.length());
-                name = name.replaceAll("\\\\", ".");
-            }
-            clases.add(name);
-        }
-    }
-
-    /**
-     * @param doc documento en el cual se ha hecho click
-     * @return FileObject relacionado con el documento que se hizo clic
-     */
-    private FileObject getFO(Document doc) {
-        Object sdp = doc.getProperty(Document.StreamDescriptionProperty);
-        if (sdp instanceof FileObject) {
-            return (FileObject) sdp;
-        }
-        if (sdp instanceof DataObject) {
-            DataObject dobj = (DataObject) sdp;
-            return dobj.getPrimaryFile();
-        }
-        return null;
-    }
 
     /**
      * @param className nombre completo de la clase (con paquete)

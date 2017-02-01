@@ -32,11 +32,13 @@ public class ZulCompletionItem implements CompletionItem {
     private String text;
     private static Color fieldColor = Color.decode("0x0000B2");
     private int caretOffset;
+    private int removeFrom;
     private ImageIcon fieldIcon;
 
     public ZulCompletionItem(String text, int caretOffset, String iconName) {
         this.text = text;
         this.caretOffset = caretOffset;
+        this.removeFrom = removeFrom;
         if (iconName != null) {
             fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/" + iconName));
         }
@@ -46,7 +48,8 @@ public class ZulCompletionItem implements CompletionItem {
     public void defaultAction(JTextComponent jtc) {
         try {
             StyledDocument doc = (StyledDocument) jtc.getDocument();
-            doc.insertString(caretOffset, text, null);
+            doc.remove(removeFrom, caretOffset-removeFrom);    
+            doc.insertString(removeFrom, text, null);
             //This statement will close the code completion box:
             Completion.get().hideAll();
         } catch (BadLocationException ex) {
