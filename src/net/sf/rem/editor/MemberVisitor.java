@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import org.netbeans.api.io.IOProvider;
-import org.netbeans.api.io.InputOutput;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.CompilationInfo;
 import org.netbeans.api.java.source.JavaSource;

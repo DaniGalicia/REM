@@ -104,7 +104,12 @@ public class ZulCompletionProvider implements CompletionProvider {
                                 String className = getClassName(clase);
                                 value = value.toLowerCase();
                                 if (value != null && !value.equals("") && className.toLowerCase().startsWith(value)) {
-                                    //crs.addItem(new ZulCompletionItem(className, i, "class.png"));
+                                    Map<String,Object> mapa=new HashMap<String, Object>();
+                                    mapa.put("offset", htmlAtribute.getOffset()+3);
+                                    mapa.put("length", value.length());
+                                    mapa.put("iconName", "class.png");
+                                    mapa.put("text", value);
+                                    crs.addItem(new ZulCompletionItem(mapa));
                                 }
                             }
                             break;

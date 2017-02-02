@@ -27,6 +27,7 @@ import org.openide.util.ImageUtilities;
 /**
  *
  * @author galicia
+ * 
  */
 public class ZulCompletionItem implements CompletionItem {
 
@@ -34,6 +35,11 @@ public class ZulCompletionItem implements CompletionItem {
     private Map<String,Object> mapa;
     private ImageIcon fieldIcon;
 
+    /**
+     * 
+     * @param mapa el cual lleva los atributos necesarios
+     * iconName,text,offset,length
+     */
     public ZulCompletionItem(Map mapa) {
         this.mapa=mapa;
         if (mapa.containsKey("iconName")) {
