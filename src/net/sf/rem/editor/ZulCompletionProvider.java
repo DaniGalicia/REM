@@ -9,11 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.StyledDocument;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.JavaSource;
@@ -64,89 +67,101 @@ public class ZulCompletionProvider implements CompletionProvider {
         return new AsyncCompletionTask(new AsyncCompletionQuery() {
             @Override
             protected void query(CompletionResultSet crs, Document document, int i) {
-                FileObject foClass = ZulEditorUtilities.getFO(document);
-                ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
-
-                for (FileObject root : sourcePath.getRoots()) {
-                    if (root.getPath().endsWith("java")) {
-                        javaClassPath = root.getPath();
+                try {
+                    FileObject foClass = ZulEditorUtilities.getFO(document);
+                    ClassPath sourcePath = ClassPath.getClassPath(foClass, ClassPath.SOURCE);
+                    
+                    for (FileObject root : sourcePath.getRoots()) {
+                        if (root.getPath().endsWith("java")) {
+                            javaClassPath = root.getPath();
+                        }
                     }
-                }
-                clases=  ZulEditorUtilities.findClasses(javaClassPath,false);
-      
-                // Recuperando el atributo donde se hizo click
-                etiquetas.clear();
-                atributos.clear();
-                HtmlTag htmlTag = getHtmlTag(document, i);
-                
-                HtmlAtribute htmlAtribute = getHtmlAttribute(document, i);
-                if (htmlAtribute == null || !completationTable.containsKey(htmlAtribute.getName())) {
-                    crs.finish();
-                    return;
-                }
-
-                String value = htmlAtribute.getValue();
-
-                switch (completationTable.get(htmlAtribute.getName())) {
-                    case 0://Solo busca la clase
-                        value = value.replace("{", "");
-                        value = value.replace("}", "");
-                        value = value.replace("$", "");
-                        for (String clase : clases) {
-                            String className = getClassName(clase);
-                            value = value.toLowerCase();
-                            if (value != null && !value.equals("") && className.toLowerCase().startsWith(value)) {
-                                crs.addItem(new ZulCompletionItem(className, i, "class.png"));
+                    clases=  ZulEditorUtilities.findClasses(javaClassPath,false);
+                    
+                    // Recuperando el atributo donde se hizo click
+                    etiquetas.clear();
+                    atributos.clear();
+                    //HtmlTag htmlTag = getHtmlTag(document, i);
+                    
+                    HtmlAtribute htmlAtribute = getHtmlAttribute(document, i);
+                    if (htmlAtribute == null || !completationTable.containsKey(htmlAtribute.getName())) {
+                        crs.finish();
+                        return;
+                    }
+                    
+                    int dotPosition=htmlAtribute.getValue().lastIndexOf(".");//htmlAtribute.getValue().length() - htmlAtribute.getValue().lastIndexOf(".");
+                    int lenghToDelete=htmlAtribute.getValue().substring(dotPosition+1).length();
+                    String texto=((StyledDocument) document).getText(htmlAtribute.getOffset()+dotPosition+2,3);
+                    
+                    String value = htmlAtribute.getValue();
+                    
+                    switch (completationTable.get(htmlAtribute.getName())) {
+                        case 0://Solo busca la clase
+                            value = value.replace("{", "");
+                            value = value.replace("}", "");
+                            value = value.replace("$", "");
+                            for (String clase : clases) {
+                                String className = getClassName(clase);
+                                value = value.toLowerCase();
+                                if (value != null && !value.equals("") && className.toLowerCase().startsWith(value)) {
+                                    //crs.addItem(new ZulCompletionItem(className, i, "class.png"));
+                                }
                             }
-                        }
-                        break;
-                    case 1://Busca los atributos de esa clase
-                        value = value.replace("@{win$composer.", "");
-                        value = value.replace("@{winP$composer.", "");
-                        value = value.replace("}", "");
-                        String[] separados = value.split("\\.");
-                        String text = "";
-                        try {
-                            text = document.getText(0, document.getLength() - 1);
-                        } catch (BadLocationException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-
-                        int pos = text.indexOf("apply=");
-                        String bean = getHtmlAttribute(document, pos + "apply=".length()).getValue();
-                        bean = bean.replace("{", "");
-                        bean = bean.replace("}", "");
-                        bean = bean.replace("$", "");
-                        bean = findClass(bean, true);
-                        bean = bean.replace(".java", "");
-                        bean = bean.replaceAll("\\.", "/");
-
-                        File file = new File(javaClassPath + "/" + bean + ".java");
-                        FileObject fileObject = FileUtil.toFileObject(file);
-                        JavaSource javaSource = JavaSource.forFileObject(fileObject);
-                        final String next = value;
-                        final CompletionResultSet fcrs = crs;
-                        final int caret = i;
-
-                        if (javaSource != null) {
+                            break;
+                        case 1://Busca los atributos de esa clase
+                            value = value.replace("@{win$composer.", "");
+                            value = value.replace("@{winP$composer.", "");
+                            value = value.replace("}", "");
+                            String[] separados = value.split("\\.");
+                            String text = "";
                             try {
-                                javaSource.runUserActionTask(new Task<CompilationController>() {
-                                    @Override
-                                    public void run(CompilationController compilationController) throws Exception {
-
-                                        compilationController.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                                        new MemberVisitor(compilationController, next, clases, javaClassPath, fcrs, caret).scan(compilationController.getCompilationUnit(), null);
-
-                                    }
-                                }, true);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
+                                text = document.getText(0, document.getLength() - 1);
+                            } catch (BadLocationException ex) {
+                                Exceptions.printStackTrace(ex);
                             }
-                        }
-
-                        break;
+                            
+                            int pos = text.indexOf("apply=");
+                            String bean = getHtmlAttribute(document, pos + "apply=".length()).getValue();
+                            bean = bean.replace("{", "");
+                            bean = bean.replace("}", "");
+                            bean = bean.replace("$", "");
+                            bean = findClass(bean, true);
+                            bean = bean.replace(".java", "");
+                            bean = bean.replaceAll("\\.", "/");
+                            
+                            File file = new File(javaClassPath + "/" + bean + ".java");
+                            FileObject fileObject = FileUtil.toFileObject(file);
+                            JavaSource javaSource = JavaSource.forFileObject(fileObject);
+                            final String next = value;
+                            final CompletionResultSet fcrs = crs;
+                            final int caret = dotPosition+htmlAtribute.getOffset()+2;
+                            final int len=lenghToDelete;
+                            
+                            if (javaSource != null) {
+                                try {
+                                    javaSource.runUserActionTask(new Task<CompilationController>() {
+                                        @Override
+                                        public void run(CompilationController compilationController) throws Exception {
+                                            
+                                            compilationController.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
+                                            Map<String,Object> mapa=new HashMap<String, Object>();
+                                            mapa.put("offset", caret);
+                                            mapa.put("length", len);
+                                            new MemberVisitor(compilationController, next, clases, javaClassPath, fcrs, mapa).scan(compilationController.getCompilationUnit(), null);
+                                            
+                                        }
+                                    }, true);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            
+                            break;
+                    }
+                    crs.finish();
+                } catch (BadLocationException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-                crs.finish();
             }
         }, jtc
         );
@@ -255,7 +270,7 @@ public class ZulCompletionProvider implements CompletionProvider {
                 return null;
             }
             
-            return new HtmlAtribute(attribute, value);
+            return new HtmlAtribute(attribute, value,offsetValue);
         } catch (BadLocationException ex) {
             ex.printStackTrace();
         }
@@ -289,6 +304,7 @@ public class ZulCompletionProvider implements CompletionProvider {
 
         // Find attribute
         while (token != null && token.getTokenID().getNumericID() != ZulEditorUtilities.XML_ATTRIBUTE) {
+            //if(token.getTokenID().getNumericID()==ZulEditorUtilities.)
             token = token.getPrevious();
         }
         if (token != null && token.getTokenID().getNumericID() == ZulEditorUtilities.XML_ATTRIBUTE) {

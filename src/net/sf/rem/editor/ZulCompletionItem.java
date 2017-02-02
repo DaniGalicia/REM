@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -29,18 +30,14 @@ import org.openide.util.ImageUtilities;
  */
 public class ZulCompletionItem implements CompletionItem {
 
-    private String text;
     private static Color fieldColor = Color.decode("0x0000B2");
-    private int caretOffset;
-    private int removeFrom;
+    private Map<String,Object> mapa;
     private ImageIcon fieldIcon;
 
-    public ZulCompletionItem(String text, int caretOffset, String iconName) {
-        this.text = text;
-        this.caretOffset = caretOffset;
-        this.removeFrom = removeFrom;
-        if (iconName != null) {
-            fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/" + iconName));
+    public ZulCompletionItem(Map mapa) {
+        this.mapa=mapa;
+        if (mapa.containsKey("iconName")) {
+            fieldIcon = new ImageIcon(ImageUtilities.loadImage("net/sf/rem/resources/icons/" + mapa.get("iconName").toString() ));
         }
     }
 
@@ -48,8 +45,8 @@ public class ZulCompletionItem implements CompletionItem {
     public void defaultAction(JTextComponent jtc) {
         try {
             StyledDocument doc = (StyledDocument) jtc.getDocument();
-            doc.remove(removeFrom, caretOffset-removeFrom);    
-            doc.insertString(removeFrom, text, null);
+            doc.remove((Integer)mapa.get("offset"),(Integer)mapa.get("length"));    
+           doc.insertString((Integer)mapa.get("offset"), mapa.get("text").toString(), null);
             //This statement will close the code completion box:
             Completion.get().hideAll();
         } catch (BadLocationException ex) {
@@ -64,12 +61,12 @@ public class ZulCompletionItem implements CompletionItem {
 
     @Override
     public int getPreferredWidth(Graphics graphics, Font font) {
-        return CompletionUtilities.getPreferredWidth(text, null, graphics, font);
+        return CompletionUtilities.getPreferredWidth(mapa.get("text").toString(), null, graphics, font);
     }
 
     @Override
     public void render(Graphics g, Font defaultFont, Color defaultColor, Color backgroundColor, int width, int height, boolean selected) {
-        CompletionUtilities.renderHtml(fieldIcon, text, null, g, defaultFont,
+        CompletionUtilities.renderHtml(fieldIcon, mapa.get("text").toString(), null, g, defaultFont,
                 (selected ? Color.white : fieldColor), width, height, selected);
     }
 
@@ -101,20 +98,11 @@ public class ZulCompletionItem implements CompletionItem {
 
     @Override
     public CharSequence getSortText() {
-        return text;
+        return mapa.get("text").toString();
     }
 
     @Override
     public CharSequence getInsertPrefix() {
-        return text;
+        return mapa.get("text").toString();
     }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
 }

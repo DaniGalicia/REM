@@ -21,7 +21,7 @@ public class ZulCompletionDocumentation implements CompletionDocumentation{
     }
    
     public String getText() {
-        return "Informacion de "+item.getText();
+        return "Informacion de ";//+item.getText();
     }
 
     public URL getURL() {

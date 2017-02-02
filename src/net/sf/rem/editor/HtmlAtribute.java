@@ -9,6 +9,7 @@ import com.sun.org.apache.bcel.internal.generic.RETURN;
 public class HtmlAtribute{
     private String name;
     private String value;
+    private int offset;
     private HtmlTag etiqueta;
 
     public HtmlAtribute(String name) {
@@ -18,6 +19,12 @@ public class HtmlAtribute{
     public HtmlAtribute(String name, String value) {
         this.name = name;
         this.value = value;
+    }
+    
+    public HtmlAtribute(String name, String value,int offset) {
+        this.name = name;
+        this.value = value;
+        this.offset=offset;
     }
 
     public String getName() {
@@ -45,6 +52,14 @@ public class HtmlAtribute{
 
     public void setEtiqueta(HtmlTag etiqueta) {
         this.etiqueta = etiqueta;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
 

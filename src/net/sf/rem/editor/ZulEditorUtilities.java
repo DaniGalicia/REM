@@ -38,6 +38,7 @@ public class ZulEditorUtilities {
      * The constant from XML editor
      */
     protected static int XML_ATTRIBUTE = 5;
+    protected static int XML_OPERATOR= 5;
     protected static int XML_TAG = 4;
     protected static int XML_ATTRIBUTE_VALUE = 7;
     protected static int XML_PI_CONTENT = 15;
@@ -150,6 +151,10 @@ public class ZulEditorUtilities {
             return dobj.getPrimaryFile();
         }
         return null;
+    }
+    
+    public static int getPositionPoint(Document doc,int offset){
+        return 0;
     }
 
 }

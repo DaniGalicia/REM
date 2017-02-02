@@ -9,7 +9,9 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.util.TreePathScanner;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import org.netbeans.api.io.IOProvider;
@@ -29,20 +31,19 @@ import org.openide.filesystems.FileUtil;
 public class MemberVisitor extends TreePathScanner<Void, Void> {
 
     private CompilationInfo info;
+    private Map<String,Object> mapa;
     private String next;
     private List<String> clases;
     private String javaClassPath;
-    private int caretOfseet;
-    private int removeFrom;
     CompletionResultSet completionResultSet;
 
-    public MemberVisitor(CompilationInfo info, String next, List clases, String classPath,CompletionResultSet crs,int caretoffset) {
+    public MemberVisitor(CompilationInfo info, String next, List clases, String classPath,CompletionResultSet crs,Map mapa) {
         this.info = info;
         this.next = next;
         this.clases = clases;
         this.javaClassPath = classPath;
         this.completionResultSet=crs;
-        this.caretOfseet= caretoffset;
+        this.mapa= mapa;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class MemberVisitor extends TreePathScanner<Void, Void> {
                                 @Override
                                 public void run(CompilationController compilationController) throws Exception {
                                     compilationController.toPhase(JavaSource.Phase.ELEMENTS_RESOLVED);
-                                    new MemberVisitor(compilationController, next, clases, javaClassPath,completionResultSet,caretOfseet ).scan(compilationController.getCompilationUnit(), null);
+                                    new MemberVisitor(compilationController, next, clases, javaClassPath,completionResultSet,mapa).scan(compilationController.getCompilationUnit(), null);
 
                                 }
                             }, true);
@@ -89,19 +90,23 @@ public class MemberVisitor extends TreePathScanner<Void, Void> {
                 }
             } else {
                 //Sugiere un atributo
-                InputOutput io = IOProvider.getDefault().getIO("Analysis of "
-                    + info.getFileObject().getName(), true);
-
                     for (int i = 0; i < enclosedElements.size(); i++) {
                         Element enclosedElement = (Element) enclosedElements.get(i);
                         if (enclosedElement.getKind().isField()) {
                             if (enclosedElement.getSimpleName().toString().startsWith(atributo)) {
-                                completionResultSet.addItem(new ZulCompletionItem(enclosedElement.getSimpleName().toString(), caretOfseet, "fieldPublic.png"));
-                                io.getOut().println(enclosedElement.getSimpleName());
+                                Integer ofset=(Integer) mapa.get("offset");
+                                Integer largo=(Integer) mapa.get("length");
+                                mapa=new HashMap<String, Object>();
+                                
+                                mapa.put("offset", ofset);
+                                mapa.put("length", largo);
+                                mapa.put("iconName", "fieldPublic.png");
+                                mapa.put("text", enclosedElement.getSimpleName().toString());
+                                completionResultSet.addItem(new ZulCompletionItem(mapa));
                             }
                         }
         }
-                    io.getOut().close();
+
 
 
                 }
