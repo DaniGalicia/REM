@@ -110,7 +110,7 @@
                     <run-dependency>
                         <implementation-version />
                     </run-dependency>
-                </dependency>
+                </dependency> 
                 <dependency>
                     <code-name-base>org.netbeans.modules.editor.lib</code-name-base>
                     <build-prerequisite/>
